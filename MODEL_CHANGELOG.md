@@ -6,6 +6,57 @@ Append-only history of model assignment changes in
 "no changes" entries); `MODEL_CHOICES.md` holds the current rationale snapshot.
 Never rewrite or delete prior entries.
 
+## 2026-10-11 — periodic refresh (fixer fallback de-risked; oracle primary → claude-haiku-5-5)
+
+Scope: full `/model-refresh`. Availability re-derived (`opencode models` + `opencode api GET
+/api/model`) and quota re-fetched (`/docs/go`); only changed/new models re-researched (the two
+new SKUs). Every other chain kept.
+
+**Change:**
+- **Fixer fallback:** `opencode-go/qwen3.8-flash (medium)` → `opencode-go/muse-spark-1.3-contributor (high)`.
+  Why: the Oct-6 snapshot deferred this exact evaluation ("the quality-per-burn standout — a
+  candidate to evaluate next refresh"). Muse wins quality-per-burn (AA 45 xhigh vs qwen 40;
+  **45,300 vs 5,400 req/5h** headroom), is route-clean, and removes the config's last
+  route-flagged chain position. Gained: a higher-quality, far-higher-headroom, clean-route
+  fallback. Lost: the Alibaba family slot in this lane (both fixer positions now run families
+  used elsewhere), and muse-spark-1.3 concentration rises to 6 slots (Contributor SKU — trains
+  on prompts, accepted any-lane). The displaced `opencode-go/qwen3.8-flash (medium)` remains the
+  named non-contributor privacy alternative/revert, but its Go-route flags are still open.
+- **Oracle primary:** `opencode-go/gpt-6-luna (xhigh)` → `opencode-go/claude-haiku-5-5 (xhigh)`.
+  Why: on quality-per-burn (the mandate's metric) haiku beats luna by ~7–9 AA points at *every*
+  effort tier (xhigh 41 vs 34; max 43 vs 37) at slightly *less* burn (3,850 vs 4,230 req/5h), and
+  it **clears the config's only cross-lane family overlap** (gpt-6-luna sat at both orchestrator
+  fallback and oracle primary) — oracle is now {Anthropic, Meta-muse} vs orchestrator
+  {DeepSeek, OpenAI}. The "workhorse, not deep reasoner" caveat did **not** count against haiku:
+  luna carries the same supervised-worker profile, and the oracle seat is read-only advice.
+  Gained: a stronger primary and better family isolation. Lost: a field-proven model — haiku is
+  ~4 days old with no Go-route history; the fallback (muse-spark-1.3, AA 45) is stronger than
+  both, and `gpt-6-luna (xhigh)` is the named flip-back if field reports disappoint.
+
+**No change (kept):** orchestrator (`deepseek-v4.1-flash → gpt-6-luna`), explorer
+(`deepseek-v4.1-flash → mimo-v2.6-flash`), librarian
+(`muse-spark-1.3-contributor → deepseek-v4.1-flash`), designer
+(`muse-spark-1.3-contributor (xhigh) → gpt-5.6-luna (xhigh)`), observer (dormant), council
+(alpha `deepseek-v4-pro` / beta `mimo-v2.6-pro` / gamma `muse-spark-1.3-contributor`,
+synthesis `gpt-5.6-luna (max)`).
+
+**Availability diff vs 2026-10-06:** NEW `opencode-go/claude-haiku-5-5` (variants none→max,
+text+image+pdf); NEW `opencode-go/step-5-preview-free` + zen `opencode/step-5-preview-free`
+(low/medium/high, text+image+video); the zen free pool gained `opencode/exo-free` (listed but
+dead — HTTP 410 ModelDeprecated, #54209) and lost `opencode/fledge-alpha-free`;
+`opencode-go/longcat-2.0` variant map went {low,medium,high} → {} (metadata-only; AA 19). All
+8 config models remain present with valid variants.
+
+**Watched, not promoted:** `step-5-preview-free` (AA 44 independent, but coding numbers
+vendor-only and community reports failures on large PRs; free window ~Oct 15 — policy #11);
+`space-bunny` (still zero independent benchmarks; OpenRouter delisted Oct 5); `hy4-preview`
+(still rolling). `claude-haiku-5-5` left this list — promoted to oracle primary (see Change).
+
+**Watch-list refresh:** every Oct-6 route flag is still OPEN, no fix — `deepseek-v4.1-flash`
+#51990; `deepseek-v4-pro` #1244/#42090; `qwen3.8-flash` #45987/#8003/#100854; GPT-Luna region
+403; GLM-5.3-Flash serving still not stabilizing. Quota: still no multipliers anywhere; the
+Kimi K2.6 row re-appears in the `/docs/go` table (1,150/$60) but is not in the catalog.
+
 ## 2026-10-06 — full refresh (mimo-v2.6-pro leaves oracle; librarian/observer fallbacks de-free'd; xhigh opened to daily lanes)
 
 Scope: full `/model-refresh`, triggered by the user directive to move away from

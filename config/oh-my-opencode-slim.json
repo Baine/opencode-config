@@ -19,7 +19,7 @@
       },
       "oracle": {
         "model": [
-          { "id": "opencode-go/gpt-6-luna", "variant": "xhigh" },
+          { "id": "opencode-go/claude-haiku-5-5", "variant": "xhigh" },
           { "id": "opencode-go/muse-spark-1.3-contributor", "variant": "xhigh" }
         ],
         "skills": [
@@ -57,7 +57,7 @@
       "fixer": {
         "model": [
           { "id": "opencode-go/deepseek-v4.1-flash", "variant": "high" },
-          { "id": "opencode-go/qwen3.8-flash", "variant": "medium" }
+          { "id": "opencode-go/muse-spark-1.3-contributor", "variant": "high" }
         ],
         "skills": [],
         "mcps": []

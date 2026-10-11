@@ -1,8 +1,9 @@
 # Model Evidence Cache
-> Updated: 2026-10-06. Maintained by /model-refresh. Manual edits allowed.
+> Updated: 2026-10-11. Maintained by /model-refresh. Manual edits allowed.
 
-## Availability Snapshot (as-of 2026-10-06)
+## Availability Snapshot (as-of 2026-10-11)
 Re-derived from `opencode models` (CLI) + `opencode api GET /api/model` (v2.0.24; `--verbose` and positional provider are REMOVED — use the REST route for variants/capabilities). Costs/ctx carried forward from prior snapshots unless noted.
+- opencode-go/claude-haiku-5-5: variants={none,low,medium,high,xhigh,max}; multimodal=image+pdf; NEW 2026-10-07; 3,850 req/5h, $15/m cap, 30d retention, training Not used (per-token cost/ctx not captured this refresh — docs table shows ≤100K/>100K pricing tiers)
 - opencode-go/deepseek-v4-flash: variants={low,high,max}; multimodal=none (text-only); cost=$0.15/$0.60; ctx 1M; STILL FLAGGED (go-route)
 - opencode-go/deepseek-v4-flash-vision-exp: variants={low,high,max}; multimodal=image; cost=$0.15/$0.60; ctx 1M; status=exp
 - opencode-go/deepseek-v4-pro: variants={high,max}; multimodal=none; cost=$0.66/$1.98; ctx 1M; STILL FLAGGED (go-route)
@@ -18,8 +19,8 @@ Re-derived from `opencode models` (CLI) + `opencode api GET /api/model` (v2.0.24
 - opencode-go/hy4-preview: variants={none,high}; multimodal=none; cost=$0.834/$2.501; ctx 1.024M; (free window ended ~Sep 11)
 - opencode-go/kimi-k2.7-code: variants={}; multimodal=image+video; cost=$0.95/$4.00; ctx 262k
 - opencode-go/kimi-k3: variants={max}; multimodal=image+video; cost=$3/$15; ctx 1M
-- opencode-go/longcat-2.0: variants={low,medium,high}; multimodal=none; cost=$0.30/$1.20; ctx 1M
-- opencode-go/longcat-2.5-preview-free: variants={}; multimodal=image; cost=$0/$0 FREE (unlimited, limited-time; end date unverified, ~Oct 9 claim — see entry); ctx 1M (131k output)
+- opencode-go/longcat-2.0: variants={} (was {low,medium,high} — variant map emptied this refresh, metadata-only); multimodal=none; cost=$0.30/$1.20; ctx 1M
+- opencode-go/longcat-2.5-preview-free: variants={}; multimodal=image; cost=$0/$0 FREE (unlimited, limited-time; NO official end date — aggregator "two weeks" from Sep 26 → ~Oct 10 UNVERIFIED; still listed active 2026-10-11 — see entry); ctx 1M (131k output)
 - opencode-go/mimo-v2.5: variants={}; multimodal=image+video+audio; cost=$0.14/$0.28; ctx 1M
 - opencode-go/mimo-v2.5-pro: variants={}; multimodal=none; cost=$0.435/$0.87; ctx 1M
 - opencode-go/mimo-v2.6-flash: variants={}; multimodal=image+video+audio; cost=$0.14/$0.28; ctx 1M
@@ -29,26 +30,44 @@ Re-derived from `opencode models` (CLI) + `opencode api GET /api/model` (v2.0.24
 - opencode-go/muse-spark-1.2-contributor: variants={minimal,low,medium,high,xhigh}; multimodal=image+video+audio+pdf; cost=$0.10/$0.20; ctx 1M
 - opencode-go/muse-spark-1.3-contributor: variants={minimal,low,medium,high,xhigh}; multimodal=image+video+audio+pdf; cost=$0.10/$0.20; ctx 1M
 - opencode-go/qwen3.7-plus: variants={none,high,max}; multimodal=image+video; cost=$0.40/$1.60 (<256k ctx); ctx 1M
-- opencode-go/qwen3.8-flash: variants={none,low,medium,xhigh} (no "high"! `none` added this refresh); multimodal=image+video; cost=$0.15/$0.47; ctx 1M; STILL FLAGGED (variant handling + go-route)
+- opencode-go/qwen3.8-flash: variants={none,low,medium,xhigh} (no "high" — `medium` is the structural ceiling); multimodal=image+video; cost=$0.15/$0.47; ctx 1M; STILL FLAGGED (variant handling + go-route)
 - opencode-go/qwen3.8-max: variants={none,low,medium,xhigh}; multimodal=image+video; cost=$2/$6; ctx 1M
-- opencode-go/space-bunny: variants={low,medium,high,xhigh,max}; multimodal=image+video; cost=$0.15/$0.60; ctx 1M (524k output); $30/m cap; 3,130 req/5h; **NEW 2026-10-06 — the former FREE `space-bunny-free` SKU became PAID Go; the free sibling now lives in the zen pool as `opencode/space-bunny-free`** (see entry)
-- REMOVED this refresh (pruned at write-back): opencode-go/glm-5.1, opencode-go/kimi-k2.6, opencode-go/qwen3.6-plus, opencode-go/qwen3.7-max
+- opencode-go/space-bunny: variants={low,medium,high,xhigh,max}; multimodal=image+video; cost=$0.15/$0.60; ctx 1M (524k output); $30/m cap; 3,130 req/5h; (PAID since 2026-10-06; free sibling in zen as `opencode/space-bunny-free`; OpenRouter delisted the stealth listing 2026-10-05 — see entry)
+- opencode-go/step-5-preview-free: variants={low,medium,high}; multimodal=image+video; cost=$0/$0 FREE (unlimited, limited-time); ctx 1M; NEW 2026-10-08 (StepFun 600B/27B MoE, ~87 t/s — see entry)
+- REMOVED this refresh: (none from the Go catalog — all prior prunings already applied); zen free pool lost `opencode/fledge-alpha-free`
 
-Eligible zen free (`opencode/...`) as-of 2026-10-06 (out-of-config; informational): big-pickle, fledge-alpha-free, ling-3.0-flash-fin-free, ling-3.1-flash-free, longcat-2.5-preview-free, mimo-v2.6-flash-free, muse-spark-1.3-contributor-free, nemotron-3-ultra-free, nemotron-3.5-lightning-free, space-bunny-free.
+Eligible zen free (`opencode/...`) as-of 2026-10-11 (out-of-config; informational): big-pickle, ling-3.0-flash-fin-free, ling-3.1-flash-free, longcat-2.5-preview-free, mimo-v2.6-flash-free, muse-spark-1.3-contributor-free, nemotron-3-ultra-free, nemotron-3.5-lightning-free, space-bunny-free, step-5-preview-free (+ `opencode/exo-free`, listed but DEAD — HTTP 410 ModelDeprecated #54209). Removed since 2026-10-06: fledge-alpha-free.
 
-## Quota Economics (as-of 2026-10-06; source: opencode.ai/docs/go/ + #usage-limits + #estimated-requests, live fetch 2026-10-06)
-- Flat subscriptions: **Go $10/month** and **Go Plus $40/month** (NEW tier this refresh; docs publish no separate numeric limits for Plus — the per-model table below is the same pool basis)
+## Quota Economics (as-of 2026-10-11; source: opencode.ai/docs/go/ + #usage-limits + #estimated-requests, live fetch 2026-10-11)
+- Flat subscriptions: **Go $10/month** and **Go Plus $40/month** (docs publish no separate numeric limits for Plus — the per-model table below is the same pool basis)
 - Caps are per-model dollar limits: 5h = 20% of monthly, weekly = 50%, monthly = 100%. Track at opencode.ai/auth.
-- **Burn authority (user-mandated 2026-09-12): the Estimated Requests table at https://opencode.ai/docs/go#estimated-requests — ALWAYS reason from req/5h, NEVER dollar prices/caps.** Authoritative req/5h table (re-fetched 2026-10-06; diffs vs 2026-09-27 in bold): GLM-5.3-Flash 6,320/$60; GLM-5.3 220/$15; GLM-5.2 880/$60; Kimi K3 110/$15; Kimi K2.7 Code 1,350/$60; LongCat-2.0 11,400/$60; LongCat 2.5 Preview Free Unlimited; MiMo-V2.6-Flash 30,100/$60; MiMo-V2.6-Pro 3,250/$15; MiMo-V2.5 30,100/$60; MiMo-V2.5-Pro 3,250/$15; MiniMax M3 3,200/$60; MiniMax M2.7 3,400/$60; Muse Spark 1.3 45,300/$60; Muse Spark 1.2 45,300/$60; Qwen3.8 Max 160/$15; Qwen3.8 Flash 5,400/$30; Qwen3.7 Plus 4,300/$60; DeepSeek V4.1 Flash 26,000/$60 (flat, permanent per user 2026-09-26; 4x promo expired Sep 27 — do not re-apply); DeepSeek V4 Pro 1,050/$15; DeepSeek V4 Flash 13,000/$30; DSv4 Flash Vision Exp 6,500/$15; Hy4 preview 1,350/$30; Hy3 4,300/$60; **Space Bunny 3,130/$30 (NEW — now PAID)**; Grok 4.7 169/$15; Grok 4.6 169/$15; GPT-6 Luna 4,230/$15; GPT-5.6 Luna 2,050/$15. (Rows gone from the table: Kimi K2.6, Qwen3.6 Plus, Qwen3.7 Max — consistent with their removal from the catalog.)
-- Usage multipliers: **NONE as-of 2026-10-06** (re-verified; the v4.1-flash 4x promo expired Sep 27 — do not re-apply; re-verify at opencode.ai/go every refresh)
+- **Burn authority (user-mandated 2026-09-12): the Estimated Requests table at https://opencode.ai/docs/go#estimated-requests — ALWAYS reason from req/5h, NEVER dollar prices/caps.** Authoritative req/5h table (re-fetched 2026-10-11; bold = new/changed rows of note): GLM-5.3-Flash 6,320/$60; GLM-5.3 220/$15; GLM-5.2 880/$60; Kimi K3 110/$15; Kimi K2.7 Code 1,350/$60; LongCat-2.0 11,400/$60; LongCat 2.5 Preview Free Unlimited; MiMo-V2.6-Flash 30,100/$60; MiMo-V2.6-Pro 3,250/$15; MiMo-V2.5 30,100/$60; MiMo-V2.5-Pro 3,250/$15; MiniMax M3 3,200/$60; MiniMax M2.7 3,400/$60; Muse Spark 1.3 45,300/$60; Muse Spark 1.2 45,300/$60; Qwen3.8 Max 160/$15; Qwen3.8 Flash 5,400/$30; Qwen3.7 Plus 4,300/$60; DeepSeek V4.1 Flash 26,000/$60 (flat, permanent per user 2026-09-26; 4x promo expired Sep 27 — do not re-apply); DeepSeek V4 Pro 1,050/$15; DeepSeek V4 Flash 13,000/$30; DSv4 Flash Vision Exp 6,500/$15; Hy4 preview 1,350/$30; Hy3 4,300/$60; **Space Bunny 3,130/$30 (NEW — now PAID)**; Grok 4.7 169/$15; Grok 4.6 169/$15; GPT-6 Luna 4,230/$15; GPT-5.6 Luna 2,050/$15; **Claude Haiku 5.5 3,850/$15 (NEW)**; **Step 5 Preview Free Unlimited (NEW)**. (Rows gone from the table: Qwen3.6 Plus, Qwen3.7 Max. Drift note: the **Kimi K2.6 row re-appears in the doc table (1,150/$60) but is NOT in the catalog** — re-check.)
+- Usage multipliers: **NONE as-of 2026-10-11** (re-verified; the v4.1-flash 4x promo expired Sep 27 — do not re-apply; re-verify at opencode.ai/go every refresh)
 - DeepSeek peak/off-peak: Peak 01:00-04:00 & 06:00-10:00 UTC Mon-Fri; off-peak half price. **DeepSeek ZDR renewed monthly, valid through Oct 31 2026** (was Sep 30 — doc diff this refresh).
 - Images billed as input tokens by dimensions; Zen balance credits can backstop via "Use balance" toggle
 
-## Stable Quota Facts (90-day TTL; last re-verified 2026-10-06)
-- Privacy (docs table 2026-10-06): Contributor SKUs (Muse Spark 1.2/1.3) train on prompts — the ONLY training-on-prompts models in Go (Not ZDR, limited regions); accepted any-lane 2026-09-24; Grok/GPT-Luna 30d retention with training Not used; **space-bunny now reads "Not used / 0 days"** (the prior OpenRouter "may train" contradiction is not reflected in the current Go docs table — resolved as far as Go docs go); longcat-2.5-preview-free + MiMo "Not used / 0 days".
+## Stable Quota Facts (90-day TTL; last re-verified 2026-10-11)
+- Privacy (docs table 2026-10-11): Contributor SKUs (Muse Spark 1.2/1.3) train on prompts — the ONLY training-on-prompts models in Go (Not ZDR, limited regions); accepted any-lane 2026-09-24; Grok/GPT-Luna/Claude Haiku 5.5 30d retention with training Not used; **space-bunny reads "Not used / 0 days"** in the Go docs table; longcat-2.5-preview-free + MiMo + Step 5 Preview Free "Not used / 0 days".
 - Go proxy routes models through Responses/chat-completions paths; a model failing the Go route is unusable regardless of quality (Step-3 hard gate).
 
 ## Per-Model Research
+### opencode-go/claude-haiku-5-5 (NEW 2026-10-07)
+- as-of: 2026-10-11
+- benchmarks: AA Intelligence Index: max 43 / xhigh 41 / high 38 / medium 34 / low 29; AA Coding Agent Index 0.414 (best at xhigh) — **#22/24**; SWE-bench Pro 64.8% (vendor), SWE Multilingual 83.7% (vendor), Multimodal 30.7% (vendor), Terminal-Bench 4.0 39.2% (vendor) / **~33–35% independent**; Design Arena Elo 1290/1312/1278; LMArena WebDev 1587; ~162k output tokens/task at max (verbosity/latency tax)
+- community: consensus = fast workhorse/subagent, **not a deep coder** (good for quick subagent work, not frontier reasoning)
+- go-route: **route-clean per user decision 2026-10-11.** The librarian's initial FLAG rested on a single third-party client repro — OnesoftQwQ/opencode-go-copilot #137/#138 (`400 thinking.type.enabled is not supported` → needs adaptive thinking + signed-thinking replay), fixed client-side v1.12.1→v1.12.2 (PR #139); **no `anomalyco/opencode` reports.** 3,850 req/5h, $15/m cap, 30d retention, training Not used
+- config role (2026-10-11): **oracle primary** (`xhigh`) — promoted from candidate on user decision 2026-10-11 (quality-per-burn: AA 41 xhigh beats gpt-6-luna's 34 at *less* burn, 3,850 vs 4,230; clears the config's only cross-lane family overlap). Flip-back to gpt-6-luna (xhigh) if field reports disappoint (watch-list)
+
+### opencode-go/step-5-preview-free (NEW 2026-10-08)
+- as-of: 2026-10-11
+- identity: StepFun, 600B/27B MoE, 1M ctx, ~87 t/s, native image+video; variants {low,medium,high}
+- benchmarks: AA Intelligence Index **44 (independent)**; coding numbers **vendor-only** (no independent coding evals)
+- community: reports of failures on large PRs; otherwise light coverage
+- preview expiry: free window ~Oct 8→15 2026 — **policy #11 applies**; no official end date captured
+- privacy: Not used / 0 days; unlimited free (limited-time)
+- go-route: no reports yet (untested)
+- config role (2026-10-11): **none** — candidate only; expiry + first independent agentic evals gate any consideration
+
 ### opencode-go/glm-5.3-flash
 - as-of: 2026-09-12 (unchanged; re-verified 2026-09-24)
 - benchmarks: AA Intelligence Index v4.3: 42 (#3/113 Large Open) (artificialanalysis.ai/models/glm-5-3-flash, 2026-09-12); TB2.1 vendor-reported 82.7-84.3; SWE-bench/LiveCodeBench/Coding Agent Index: no data found (unverified); 94.9 tok/s, $0.25/task
@@ -56,10 +75,10 @@ Eligible zen free (`opencode/...`) as-of 2026-10-06 (out-of-config; informationa
 - go-route: PASS — no GitHub issues found for Go route (search 2026-09-12); 6,320 req/5h (authoritative table 2026-10-06)
 
 ### opencode-go/deepseek-v4-pro
-- as-of: 2026-10-06 (go-route re-verified)
+- as-of: 2026-10-11 (go-route re-verified — all defects still open)
 - benchmarks: AA dedicated page: no data found (unverified); TB2.1 GA 87.9 vendor-reported (DeepSeek card/felloai 2026-07-31); SWE-bench Verified 80.6% (vendor, preview-era, deepseekai.guide 2026-04-24); SWE-bench Pro 55.4% (Pro Max); LiveCodeBench 93.5% (Pro Max, aggregator); TB2.0 67.9
 - community: r/DeepSeek 2026-04-24: Pro+Flash tool-call confusion (returns args as text instead of tool_call, agent loop stops; vLLM fix cited, no Go-side mitigation confirmed); r/opencodeCLI 2026-06-01: Pro = strategic depth, catches second-order security issues, but slow/rigid; Pro high ≈ Flash max in practice
-- go-route: STILL FLAGGED (as-of 2026-10-06, all defects open; NO new reports since Sep 27) — model-side tool-args-as-text (deepseek-ai/DeepSeek-V3#1244, open since Apr, worsens w/ large tool schemas); Go Responses-path 400 `tools[N].function missing name` on nameless tools (anomalyco/opencode#42090; workaround = chat/completions routing; related open #24224/#24344 Anthropic-path duplicate); multi-turn 400 pro-only (#42135, plus #42091 `/v1/messages` 400 Empty-input on pro); reasoning_content omitted on tool_call turns (#24722/#25000/#25134, also #35689 silent-stop; #24722 closed Aug, rest open); DSML leak (#24566/#26498; fix PR #54686 unmerged).
+- go-route: STILL FLAGGED (as-of 2026-10-11, all defects open; NO new reports since Sep 27) — model-side tool-args-as-text (deepseek-ai/DeepSeek-V3#1244, open since Apr, worsens w/ large tool schemas); Go Responses-path 400 `tools[N].function missing name` on nameless tools (anomalyco/opencode#42090; workaround = chat/completions routing; related open #24224/#24344 Anthropic-path duplicate); multi-turn 400 pro-only (#42135, plus #42091 `/v1/messages` 400 Empty-input on pro); reasoning_content omitted on tool_call turns (#24722/#25000/#25134, also #35689 silent-stop; #24722 closed Aug, rest open); DSML leak (#24566/#26498; fix PR #54686 unmerged).
 - config role (2026-10-06): council alpha ONLY (left the oracle fallback — disqualified by the Go-route hard gate). Deliberative seat, no tool loops, so the flag is tolerable.
 
 ### opencode-go/deepseek-v4-flash
@@ -75,11 +94,11 @@ Eligible zen free (`opencode/...`) as-of 2026-10-06 (out-of-config; informationa
 - go-route: NO ISSUES FOUND; responses endpoint; monitor for odd contributor behavior — none reported
 
 ### opencode-go/muse-spark-1.3-contributor
-- as-of: 2026-09-12 (re-verified in config 2026-10-06)
+- as-of: 2026-09-12 (config-role re-verified 2026-10-11)
 - benchmarks: current AA index v4.3.2: xhigh 45 / max 48; 61/62 = older article scale — NEVER mix scales (vs mimo-v2.6-pro's 46); `high`-variant score: NO DATA (AA publishes only xhigh/max) — daily-lane (`high`) performance is unmeasured. TB2.1 85% (xhigh)/86% (max); GDPval-AA v2 1709/1754 Elo; τ³-Banking 47%/52%; 235.2 tok/s xhigh, $0.55/task; Arena WebDev design splits (Reference-Based Design 1655, Gaming 1724 — kevinhu atlas, undated); AA Coding Agent Index/Design Arena: no data found
 - community: VentureBeat 2026-09-03: best cost/intelligence on market at xhigh; max variant in partner preview (may not be servable); trains on prompts
 - go-route: NO ISSUES FOUND; monitor max variant for empty responses
-- config role (2026-10-06): oracle fallback (xhigh), librarian primary (high), designer primary (xhigh), council gamma, dormant observer fallback — **5 slots** (concentration watch-list). Durable gotchas: Responses-only endpoint; free-cap 429s; contributor trains on prompts.
+- config role (2026-10-11): oracle fallback (xhigh), librarian primary (high), designer primary (xhigh), **fixer fallback (high — added 2026-10-11; note `high` variant unmeasured)**, council gamma, dormant observer fallback — **6 slots** (concentration watch-list). Durable gotchas: Responses-only endpoint; free-cap 429s; contributor trains on prompts.
 
 ### opencode-go/kimi-k3
 - as-of: 2026-09-12 (unchanged)
@@ -88,11 +107,11 @@ Eligible zen free (`opencode/...`) as-of 2026-10-06 (out-of-config; informationa
 - go-route: FLAGGED (low) — max-only variant: Go forwards `max` only, drops other efforts; any non-max variant request may be ignored — always use variant max or no variant
 
 ### opencode-go/qwen3.8-flash
-- as-of: 2026-10-06 (go-route re-verified)
+- as-of: 2026-10-11 (go-route re-verified)
 - benchmarks: AA Intelligence Index 40 (#5/113) on qwen3-8-flash-next page (canonical; single score, no per-effort breakdown listed) (artificialanalysis.ai/models/qwen3-8-flash-next, re-verified 2026-09-27); 27B family variant table lives on the qwen3-8-27b AA release page: xhigh 34, medium 28, low 26, none 22 — NO "high" exists on AA for this family; $0.16/task, 47.7 tok/s; SWE/TB: no data found (unverified)
 - community: sentinel thread 2026-08-28: loops on long tasks like GLM; beyond 90k ctx slows to a crawl on M3 Ultra while ds4 stays 40 tok/s; user rolled back to ds4
-- go-route: STILL FLAGGED (as-of 2026-10-06, no new reports) — no "high" variant (low/medium/xhigh/none, CLI-confirmed 2026-10-06) — medium is the structural ceiling (xhigh violates the daily-lane cap; note #7 now allows xhigh → xhigh is now a legal fixer fallback variant if desired). Max-truncation report (#45987, 2026-08-28, assigned, STILL OPEN unrefuted). Long-context XML tool-call leak model-side (qwen-code#8003, >187k ctx; closed-triage with mitigation PR #8037, not a model fix). Hermes 404 via Go Anthropic path (hermes-agent#100854, Sep 2, still open; referenced PR #100873). 5,400 req/5h
-- config role (2026-10-06): fixer fallback (medium) — the last route-flagged fallback in config.
+- go-route: STILL FLAGGED (as-of 2026-10-11, no new reports) — no "high" variant (low/medium/xhigh/none, CLI-confirmed 2026-10-06) — medium is the structural ceiling (xhigh violates the daily-lane cap; qwen is no longer in any chain as of 2026-10-11). Max-truncation report (#45987, 2026-08-28, assigned, STILL OPEN unrefuted). Long-context XML tool-call leak model-side (qwen-code#8003, >187k ctx; closed-triage with mitigation PR #8037, not a model fix). Hermes 404 via Go Anthropic path (hermes-agent#100854, Sep 2, still open; referenced PR #100873). 5,400 req/5h
+- config role (2026-10-11): **no longer in any chain** — the fixer fallback moved to muse-spark-1.3-contributor on 2026-10-11. Retained only as the named non-contributor privacy alternative at oracle/designer; its Go-route flags remain open but matter less at alternative-only status.
 
 ### opencode-go/glm-5.2
 - as-of: 2026-09-27 (first-pass backfill — council-beta alternative)
@@ -113,7 +132,7 @@ Eligible zen free (`opencode/...`) as-of 2026-10-06 (out-of-config; informationa
 - go-route: PASS — no issues found
 
 ### opencode-go/deepseek-v4.1-flash
-- as-of: 2026-10-06 (go-route re-verified)
+- as-of: 2026-10-11 (go-route re-verified)
 - benchmarks: AA Intelligence Index 39–40 (Reasoning Max Effort) #6/113 (artificialanalysis.ai/models/deepseek-v4-1-flash, 2026-09-12; released 2026-09-10); 198.6 tok/s (#5/113 — notably fast), $0.27/task, 552B/16B MIT; TB/SWE: no data found (too new)
 - community: one positive anecdote (r/CommandCode via Tabbit, 2026-09-22): completed a site UI/UX task where MiMo v2.6 Flash+Pro both looped 30min on grep
 - go-route: **NEW FLAG (2026-10-06)** — opaque intermittent 400 body `{'model':'deepseek-v4.1-flash'}` (anomalyco/opencode#51990, reported Sep 25–29; duplicates #51434/#51477/#51201/#50761). Otherwise route-clean; catalog thinkingLevelMap maps max→null for this family — use high not max; **quota: flat 26,000 req/5h PERMANENT (user 2026-09-26), no 4x — do not re-apply promo**
@@ -127,11 +146,11 @@ Eligible zen free (`opencode/...`) as-of 2026-10-06 (out-of-config; informationa
 - config role (2026-10-06): designer fallback (xhigh), council synthesis (max).
 
 ### opencode-go/gpt-6-luna (NEW 2026-09-22)
-- as-of: 2026-10-06 (config-role + go-route re-verified)
+- as-of: 2026-10-11 (config-role + go-route re-verified)
 - benchmarks: AA Intelligence Index 37 (max) — tie with GPT-5.6 Luna max (AA article "GPT-6 Sol and Luna push the cost efficiency frontier" 2026-09-22 + model page); variant curve: max 37/xhigh 34/high 32/medium 29/low 21/none 18; AA Coding Agent Index (Codex harness, max) 41 — REGRESSION vs 5.6-Luna's 43 (SWE-Atlas-QnA 44% vs 49%, DeepSWE 64% vs 66%); Terminal-Bench 4.0 13%; GDPval-AA −75 Elo, AA-Briefcase −45 Elo (presentation/rubric omissions); hallucination improved (77% vs 93%); SWE-bench Verified/Pro, LiveCodeBench, TB2.x, Design Arena: no data found (unverified)
 - community: consensus = excellent supervised worker/subagent (Sol plans → Luna executes), risky as unsupervised autonomous editor — one reported critical-code deletion + ignored "do not spawn" constraint (r/codex via Tabbit 2026-09-23); "half the price is a really big deal" (HN 2026-09-23); HokAI: "save it for lightweight agentic tasks, not frontier coding"; verbose at max (~51k output tokens/task)
 - go-route: NO ISSUES FOUND (re-verified 2026-10-06; no new reports); 4,230 req/5h, $15/m cap, no multiplier; privacy: training Not used, 30d retention
-- config role (2026-10-06): orchestrator fallback (high), **oracle primary (xhigh)**. Supervised-worker profile; assigned only where supervised (orchestrator) or read-only advice (oracle).
+- config role (2026-10-11): orchestrator fallback (high) only — oracle primary moved to claude-haiku-5-5 (xhigh) on 2026-10-11; retained as that seat's named flip-back. Supervised-worker profile; assigned only where supervised (orchestrator) or read-only advice.
 
 ### opencode-go/grok-4.7 (NEW 2026-09-21)
 - as-of: 2026-09-24
@@ -155,19 +174,19 @@ Eligible zen free (`opencode/...`) as-of 2026-10-06 (out-of-config; informationa
 - config role (2026-10-06): **council beta ONLY** (user decision: overthinking tolerable in a deliberative seat). Removed from oracle (user directive 2026-10-06: "thinking a lot in loops") and from designer (2026-09-27). Revert candidate for designer/oracle only with the overthinking tax in mind.
 
 ### opencode-go/space-bunny (NEW 2026-10-06; formerly space-bunny-free)
-- as-of: 2026-10-06 (research carried from the 2026-09-24 space-bunny-free pass — identity/benchmarks unchanged)
+- as-of: 2026-10-11 (benchmarks still unverified; research carried from the 2026-09-24 space-bunny-free pass)
 - identity: anonymous stealth preview (OpenRouter `stealth/space-bunny-alpha` precedent); MiniMax-M3 rebrand rumor (tokenizer match, nnets.ru) — UNVERIFIED single source; 1M ctx, native multimodal (image+video), low→max effort
 - benchmarks: ALL no data found (unverified) — no AA page, no independent evals; unofficial SMF 128/157 (81.5%, ties mimo-v2.6-pro), AI BENCHY 7/10; gadgetreactor audit 6 calc bugs, 3.09% tool-call err, 98.88% avail, P50 87 tok/s; "strong coding" is listing copy
-- community: buildfastwithai 8.8/10; no dedicated Go-route issue threads
+- community: buildfastwithai 8.8/10; no dedicated Go-route issue threads; **OpenRouter delisted the stealth listing 2026-10-05**
 - privacy: Go docs now read "Not used / 0 days" (the prior OpenRouter stealth "may train" contradiction is resolved in the current Go table — treat as resolved-on-paper, monitoring).
 - go-route: NO ISSUES FOUND; now **PAID** — 3,130 req/5h, $0.15/$0.60, $30/m cap, no multiplier. Free sibling retained as `opencode/space-bunny-free` in zen.
 - status: not promoted to any lane (zero independent benchmarks; unverified identity). Eligible only once first independent benchmarks land.
 
 ### opencode-go/longcat-2.5-preview-free (NEW 2026-09-25)
-- as-of: 2026-09-27 (full first research pass; out of config 2026-10-06)
+- as-of: 2026-10-11 (still listed active; expiry unverified)
 - benchmarks: ALL no data found (unverified) — no AA page as-of 2026-09-27 (404); no vendor benchmark table for 2.5; LongCat-2.0 AA 19 and TB2.1 70.8 DO NOT transfer. Specs: ~1.6T/48B, 1M ctx, native image understanding, API-only
 - community: one Chinese hands-on (techgogogo 2026-09-26): "能用，但不算很能打" (usable, not very strong); no Reddit/HN/OpenRouter threads. Reasoning arrives as interleaved reasoning_content toggle — harnesses that drop it lose thinking
-- preview expiry: NO official end date; aggregator "two weeks free" (~Oct 9-10) UNVERIFIED — policy #11 applies
+- preview expiry: NO official end date; aggregator "two weeks free" from Sep 26 (→ ~Oct 10) UNVERIFIED; **still listed active in Go docs 2026-10-11** — policy #11 applies
 - privacy: Go docs "Not used / 0 days"; not in Zen exception list
 - go-route: NO DATA — zero GitHub reports mentioning longcat-2.5 as-of 2026-09-27; untested
 - config role (2026-10-06): removed from librarian + observer fallbacks (session choice: run paid non-contributor fallbacks instead). Still in catalog as a free option.
@@ -180,10 +199,10 @@ Eligible zen free (`opencode/...`) as-of 2026-10-06 (out-of-config; informationa
 - config role: non-contributor cheap-fallback option (librarian / fixer)
 
 ### opencode-go/hy4-preview
-- as-of: 2026-09-12 (unchanged; preview risk)
+- as-of: 2026-10-11 (still active in Go docs; preview risk)
 - benchmarks: AA: no data found (unverified); vendor: SWE-bench Pro 65.7, SWE Multilingual 82.9, TB2.1 85.4, GPQA 92.3, HLE 55.4, DeepSWE 64.3; blind eval 2.99 avg vs GLM-5.3 2.92; Tencent known issue: "spending longer than necessary reasoning"
 - community: early version, iterating fast
-- go-route: FLAGGED (preview risk) — free window ended ~2026-09-11; still listed active in Go docs 2026-10-06; rolling preview — expect iteration/replacement without notice; $30/m cap
+- go-route: FLAGGED (preview risk) — free window ended ~2026-09-11; still listed active in Go docs 2026-10-11; rolling preview — expect iteration/replacement without notice; $30/m cap
 
 ### opencode-go/qwen3.7-plus
 - as-of: 2026-09-12 (unchanged)
@@ -204,10 +223,10 @@ Eligible zen free (`opencode/...`) as-of 2026-10-06 (out-of-config; informationa
 - go-route: PASS — no issues found; 169 req/5h → premium-burn class
 
 ### opencode-go/longcat-2.0
-- as-of: 2026-09-12 (unchanged)
+- as-of: 2026-10-11 (variant-map change)
 - benchmarks: AA Intelligence Index 20 (#49/113) (artificialanalysis.ai/models/longcat-2-0, 2026-09-12); $0.06/task cheapest open tier, 1.6T/48B MIT; SWE/TB: no data found (unverified)
 - community: none found (unverified)
-- go-route: PASS — no issues found; 11,400 req/5h
+- go-route: PASS — no issues found; 11,400 req/5h; variant map emptied this refresh ({low,medium,high}→{}) — metadata-only, no route impact
 
 ### opencode-go/kimi-k2.7-code
 - as-of: 2026-09-12 (unchanged)

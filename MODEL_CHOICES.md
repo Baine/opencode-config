@@ -1,7 +1,7 @@
 # Model Choices — Why Each Agent Runs What It Runs
 
 Reasoning behind every model assignment in [`oh-my-opencode-slim.json`](config/oh-my-opencode-slim.json).
-Snapshot rewritten Oct 6 2026 from a full `/model-refresh`; evidence cited from Artificial
+Snapshot rewritten Oct 11 2026 from a full `/model-refresh`; evidence cited from Artificial
 Analysis (Intelligence Index), community field reports, Go-route reliability sweeps, and the
 OpenCode Go Estimated Requests table (burn authority — see principles). Transition history
 lives in [`MODEL_CHANGELOG.md`](./MODEL_CHANGELOG.md); raw findings in
@@ -18,9 +18,9 @@ names its non-training privacy alternative.
    <https://opencode.ai/docs/go#estimated-requests>     (req/5h per model). **Never** reason from
    dollar prices or monthly dollar caps — quota economics are request-rate economics on a
    shared pool. Key burn facts (full table: MODEL_EVIDENCE_CACHE.md §Quota Economics,
-   as-of 2026-10-06): DeepSeek V4.1 Flash is a flat permanent 26,000 req/5h
+   as-of 2026-10-11): DeepSeek V4.1 Flash is a flat permanent 26,000 req/5h
    (user-confirmed 2026-09-26, no multiplier); no per-model multipliers exist anywhere in
-   the catalog (re-verified 2026-10-06).
+   the catalog (re-verified 2026-10-11).
 2. **Burn floor for hot lanes** — any lane the user actively works through (orchestrator,
    explorer, librarian, designer, fixer) needs ≥~800 req/5h (GLM-5.3-Flash is the reference).
    Sub-floor models are only acceptable where calls are genuinely rare.
@@ -36,10 +36,10 @@ names its non-training privacy alternative.
    amended 2026-10-06; previously only oracle/council could exceed `high`).
 6. **Two-deep chains** — primary + one fallback, family-diverse within each lane and across
    orchestrator vs oracle. The same model/family across different agents' chains is fine.
-   Current cross-check: orchestrator {DeepSeek, OpenAI} vs oracle {OpenAI, Meta-muse} —
-   one direct overlap (gpt-6-luna sits at orchestrator *fallback* and oracle *primary*),
-   accepted: each lane still keeps an independent family at its other slot, so a single
-   family outage degrades neither lane to zero.
+   Current cross-check: orchestrator {DeepSeek, OpenAI} vs oracle {Anthropic, Meta-muse} —
+   **no overlap** (since 2026-10-11 the oracle primary is claude-haiku-5-5, clearing the earlier
+   gpt-6-luna overlap with the orchestrator *fallback*), so a single family outage degrades
+   neither lane.
 7. **Provider inclusion + Go-route reliability hard gate** — only `opencode-go/...` (paid Go
    pool) and free zen (`opencode/...`) models are eligible for any chain; all other providers
    are out of scope by default (policy amended Sep 24 2026). Proxy wiring
@@ -60,7 +60,7 @@ names its non-training privacy alternative.
 the fastest model in the config)**. The orchestrator delegates constantly, so decode speed
 compounds across every specialist spawn — latency is the lane's dominant tax. Burn: **26,000
 req/5h**, 4x+ the hot-lane floor, flat permanent rate ($60/m cap), no multiplier. route-clean
-(re-verified 2026-10-06). native image input (official spec). Run at
+(re-verified 2026-10-11). native image input (official spec). Run at
 `high`, not `max` — the flash family's `thinkingLevelMap` maps `max`→null, and orchestration
 needs snappy routing, not deep reasoning. Watch: a new opaque intermittent 400
 (`{'model':'deepseek-v4.1-flash'}`, #51990, Sep 25–29) — see watch-list.
@@ -81,27 +81,27 @@ its serving latency is ever fixed (see watch-list).
 
 ## Oracle
 
-**Chain:** `opencode-go/gpt-6-luna (xhigh)` → `opencode-go/muse-spark-1.3-contributor (xhigh)`
+**Chain:** `opencode-go/claude-haiku-5-5 (xhigh)` → `opencode-go/muse-spark-1.3-contributor (xhigh)`
 📖 [What the Oracle does](https://github.com/alvinunreal/oh-my-opencode-slim#03-oracle-the-guardian-of-paths)
 
-**Why GPT-6 Luna leads (since Oct 6 2026):** The previous lead (MiMo-V2.6-Pro) was **removed
-by user decision** — its documented overthinking (time-to-first-answer 39–49s, ~59% reasoning
-share, no effort knob on the Go route) makes it a poor fit even in a deep-advisory lane.
-GPT-6 Luna is the strongest **route-clean** replacement: AA Intelligence **37 (max)**, a full
-effort ladder (none 18 / low 21 / medium 29 / high 32 / **xhigh 34** / max 37), image+pdf
-input, **4,230 req/5h**, training Not used. It leads because the alternative "strongest raw
-reasoning" pick — `opencode-go/deepseek-v4-pro` — **fails the Step-3 Go-route hard gate**
-(model-side tool-args-as-text stall, #1244, open since April), and the remaining high-AA
-options are premium-burn (grok-4.7 169 req/5h; glm-5.3 220 req/5h) and therefore banned.
-Run at **`xhigh`**, not `max`: oracle is advisory/read-only and does not need max's ~51k
-output-token verbosity; `xhigh` keeps the latency tax down while staying well above `high`.
+**Why Claude Haiku 5.5 leads (since Oct 11 2026):** Chosen on **quality-per-burn** (principle
+#1): AA Intelligence **41 (xhigh) / 43 (max)** — a full effort ladder (low 29 / medium 34 /
+high 38 / **xhigh 41** / max 43) that beats the prior lead `gpt-6-luna` by ~7–9 points at
+*every* tier, at slightly **less** burn (**3,850** vs 4,230 req/5h), with image+pdf input and
+training Not used (non-contributor). It is **route-clean** (user decision 2026-10-11: the
+earlier flag was a third-party client bug, not a Go-route defect). The swap also **clears the
+gpt-6-luna cross-lane overlap** with the orchestrator fallback (principle #6) — oracle is now
+{Anthropic, Meta-muse}, distinct from orchestrator {DeepSeek, OpenAI}. Run at **`xhigh`**, not
+`max`: the lane is advisory/read-only and does not need max's heavy verbosity (haiku's max
+burns ~162k output tokens/task, ~3× luna's).
 
-**Tradeoffs accepted:** AA Coding Agent Index **41** — a regression vs 5.6-Luna's 43 on the
-current scale; presentation/rubric-Elo drops (GDPval −75, AA-Briefcase −45); documented
-**supervised-worker drift** (one reported critical-code deletion unsupervised, r/codex via
-Tabbit 2026-09-23). Contained here: the oracle is **read-only** (`read_files`) and its output
-is advice the orchestrator vets, not unsupervised edits. The shared-family overlap with the
-orchestrator fallback (both gpt-6-luna) is noted under principle #6.
+**Tradeoffs accepted:** AA Coding Agent Index **0.414** (#22/24) — mid-pack for agentic coding;
+TB4.0 **39.2% vendor / ~33–35% independent**; its independent profile reads **fast
+workhorse/subagent, not a deep reasoner** — the same profile class as the model it replaced
+(`gpt-6-luna`'s documented supervised-worker drift), so the lane's read-only containment
+applies: the oracle is **read-only** (`read_files`) and its output is advice the orchestrator
+vets, not unsupervised edits. Only real holdout: haiku is ~4 days old with no Go-route field
+history (watch-list). The chain stays strong regardless — its fallback muse-spark-1.3 is AA 45.
 
 **Why Muse Spark 1.3 Contributor as #2:** a genuine **third family** (Meta-muse) — the only
 way to keep a systemic gpt or DeepSeek outage from touching both orchestrator and oracle
@@ -112,7 +112,11 @@ Contributor SKU — **trains on prompts** (accepted — see header).
 > **Privacy alternative:** `opencode-go/qwen3.8-flash` (AA 40, image+video, 5,400 req/5h) —
 > non-contributor, but route-flagged (see watch-list); not promoted while the flag stands.
 
-**Next best alternatives:** `opencode-go/deepseek-v4-pro (max)` has the strongest cached
+**Next best alternatives:** `opencode-go/gpt-6-luna (xhigh)` — the prior lead (Oct 6–11),
+route-clean, the same supervised-worker/read-only fit, but AA **34 xhigh / 37 max**: **7 points
+below** haiku at equal-or-higher burn, so retained as the flip-back if haiku's field reports
+disappoint; now the orchestrator fallback only (1 slot).
+`opencode-go/deepseek-v4-pro (max)` has the strongest cached
 correctness figures (TB2.1 87.9, SWE-bench Verified 80.6%, LiveCodeBench 93.5%) but is
 **disqualified by the Go-route hard gate** — do not re-promote without a verified fix.
 `opencode-go/mimo-v2.6-pro` (AA 46) is the recorded revert for a latency-tolerant deep seat,
@@ -203,29 +207,35 @@ has no effort knob on the Go route.
 
 ## Fixer
 
-**Chain:** `opencode-go/deepseek-v4.1-flash (high)` → `opencode-go/qwen3.8-flash (medium)`
+**Chain:** `opencode-go/deepseek-v4.1-flash (high)` → `opencode-go/muse-spark-1.3-contributor (high)`
 📖 [What the Fixer does](https://github.com/alvinunreal/oh-my-opencode-slim#07-fixer-the-last-builder)
 
 **Why DeepSeek V4.1 Flash leads:** **198.6 tok/s (fastest in config)**,
 26,000 req/5h flat standing rate (permanent, verified 2026-09-26 — well above floor).
 Quality + speed + headroom in one pick; route-clean. Run at `high` (daily-lane ceiling).
 
-**Why Qwen3.8 Flash as #2:** AA Intel 40, image+video, 5,400 req/5h, family-diverse
-(Alibaba vs DeepSeek). Variant `medium`: map is low/medium/xhigh — no `high`; `medium` is the
-structural ceiling that keeps it a fixed fallback. Community flag stands: loops on long
-tasks and crawls past ~90k context. Go-route re-verified 2026-10-06: #45987 still open
-(max-truncation), long-ctx XML tool-call leak (qwen-code#8003), hermes 404 (#100854) — no new
-reports, all prior flags unresolved. This is the one remaining route-flagged fallback in the
-config (see watch-list).
+**Why Muse Spark 1.3 Contributor as #2 (since Oct 11 2026):** the immediate prior fallback
+(`qwen3.8-flash (medium)`) was displaced on **quality per burn**: Muse carries AA
+**45 (xhigh, v4.3.2)** vs qwen's 40 and **45,300 req/5h** vs 5,400 — roughly 8× the burn
+headroom at the same cheap sub-cent $0.10/$0.20 class — and it is **route-clean**, removing
+the config's last route-flagged chain position. The Oct-6 snapshot had already named it "the
+quality-per-burn standout — a candidate to evaluate next refresh," and this refresh did so.
+Full multimodal (image+video+audio+pdf). Contributor SKU — **trains on prompts** (accepted —
+see header). Run at **`high`** (the lane's daily ceiling): note Muse's AA 45 is measured at
+`xhigh` and its **`high` variant is unmeasured** — accepted at fallback depth, where the slot
+rarely fires. Cost of the swap: the lane loses its Alibaba-family slot (both positions now run
+families used elsewhere in the config) and adds a sixth Contributor seat.
 
-**Next best alternative:** none promoted — `opencode-go/mimo-v2.6-pro` was considered and
-**dropped under the quality-per-burn rule**: its ~15% quality gain (AA 46 vs
-40) costs a ~4–8x per-request burn multiple (3,250 vs 26,000 req/5h) in the config's
-most tool-dense, retry-heavy lane — v4.1-flash plus retries wins on expected cost-per-success.
-`opencode-go/gpt-6-luna` is rejected for quality lanes (CAI regression);
-`opencode-go/deepseek-v4-pro` is STILL FLAGGED (worst in the most tool-call-dense lane).
-`opencode-go/muse-spark-1.3-contributor` (AA 45 (xhigh, v4.3.2), 45,300 req/5h, trains on
-prompts) is the quality-per-burn standout — a candidate to evaluate next refresh.
+> **Privacy alternative:** `opencode-go/qwen3.8-flash (medium)` — the displaced
+> non-contributor fallback (AA 40, image+video, 5,400 req/5h); retained as the revert, but its
+> Go-route flags remain open (see watch-list).
+
+**Next best alternative:** none promoted. `opencode-go/mimo-v2.6-pro` is rejected under
+quality-per-burn (AA 46 at 3,250 req/5h ≈ 8× burn for ~15% quality, plus its overthinking
+tax). `opencode-go/gpt-6-luna` is rejected for quality lanes (CAI regression).
+`opencode-go/deepseek-v4-pro` is STILL FLAGGED (worst in the most tool-call-dense lane). The
+reference floor model `opencode-go/glm-5.3-flash` remains a non-contributor option once its
+serving watch clears.
 
 ---
 
@@ -295,17 +305,23 @@ lane-slot concentration counts.
 - **deepseek-v4-pro Go-route flags** — tool-args-as-text (#1244, open since Apr) plus Go-path
   400s (#42090/#42135/#24566). Re-check for a verified fix; council alpha only.
 - **qwen3.8-flash Go-route flags** — max-truncation (#45987, open), long-ctx XML tool-call leak
-  (qwen-code#8003), hermes 404 (#100854). Re-check status; fixer fallback.
+  (qwen-code#8003), hermes 404 (#100854). No longer in any chain (fixer fallback moved to
+  muse-spark-1.3 on 2026-10-11); tracked only as the named non-contributor privacy alternative
+  at oracle/designer — re-check if a swap-back is ever contemplated.
+- **claude-haiku-5-5 field reports** — NEW (released Oct 7), promoted to oracle primary
+  2026-10-11 (route-clean — the sole earlier repro was a third-party client bug, not a Go-route
+  defect). Re-check the first real OpenCode Go-route reports and whether its workhorse/subagent
+  profile holds in the read-only oracle seat; if not, flip back to gpt-6-luna (xhigh). 3,850 req/5h.
 - **GPT-Luna region 403 risk** — family "Upstream request failed" 403 (predecessor #39831).
-  Re-check for luna 403 reports; could degrade oracle primary + orchestrator fallback together.
+  Re-check for luna 403 reports; now touches only the orchestrator fallback (1 slot) — the oracle
+  primary moved to haiku-5.5 on 2026-10-11, so it no longer risks both lanes at once.
 - **GLM-5.3-Flash serving latency** — re-admit as a hot-lane fallback if Z.ai/OpenRouter serving
   stabilizes (check per-refresh OpenRouter latency tables). The demotion is serving, not weights
   (AA 42, vision, 6,320 req/5h).
 - **space-bunny benchmarks** — re-check for a first independent AA/eval page before any promotion
-  (paid SKU; zero independent benchmarks as-of 2026-10-06).
-- **hy4-preview rollout** — rolling preview; re-check catalog/docs status and first independent
-  benchmarks; do not promote meanwhile.
-- **longcat-2.5-preview-free expiry** — re-check the official end date (aggregator ~Oct 9
-  UNVERIFIED); policy #11 applies.
-- **Quota-fact drift** — re-fetch `/docs/go` every refresh: multipliers (none as-of 2026-10-06),
-  DeepSeek peak/off-peak windows, ZDR window (now Oct 31 2026), new SKUs, changed req/5h rows.
+  (paid SKU; zero independent benchmarks as-of 2026-10-11; OpenRouter delisted the stealth
+  listing Oct 5).
+- **Quota-fact drift** — re-fetch `/docs/go` every refresh: multipliers (none as-of 2026-10-11),
+  DeepSeek peak/off-peak windows, ZDR window (through Oct 31 2026), new SKUs (Claude Haiku 5.5,
+  Step 5 Preview Free this refresh), changed req/5h rows (Kimi K2.6 re-listed in the doc but not
+  in the catalog).
