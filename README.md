@@ -20,7 +20,7 @@ This repo is the source of truth for my opencode configuration.
 config/
   opencode.json                 Core config (plugins, permissions, agent disables)
   oh-my-opencode-slim.json      Agent/model roster for the oh-my-opencode-slim plugin
-  cli.json                      CLI config — loads the tps-meter plugin and keybinds
+  cli.json                      CLI config — keybinds and UI settings
   opencode-quota/
     quota-toast.json            Quota plugin settings
 commands/
@@ -58,8 +58,8 @@ The config loads six plugins (installed automatically by opencode on first launc
 - **[`@hadronomy/opencode-handoff-plugin`](https://github.com/hadronomy/opencode-handoff-plugin)** — session handoff. Lets a session be handed off to a fresh one with a generated summary prompt, so work can continue without dragging the full history along.
 - **[`oh-my-opencode-slim`](https://github.com/alvinunreal/oh-my-opencode-slim)** — multi-agent workflow chain. Provides the specialist agents (orchestrator, oracle, explorer, librarian, designer, fixer, …) with per-agent model rosters and fallbacks defined in `config/oh-my-opencode-slim.json`.
 - **[`@slkiser/opencode-quota`](https://github.com/slkiser/opencode-quota)** — quota tracking and toast notifications. Settings in `config/opencode-quota/quota-toast.json`.
-- **[`opencode-status-indicator`](https://github.com/harshithmohan/opencode-status-indicator)** — TUI status indicator showing whether the active request is **prefilling** or **decoding** (Claude-Code style), loaded from `config/cli.json`.
-- **[`opencode-tps-meter@latest`](https://github.com/ChiR24/opencode-tps-meter)** — live tokens-per-second meter for the CLI. Loaded from `config/cli.json` along with custom keybinds (`ctrl+d`/`<leader>q` exit, `ctrl+c`/`escape` interrupt).
+- **[`opencode-status-indicator`](https://github.com/harshithmohan/opencode-status-indicator)** — TUI status indicator showing whether the active request is **prefilling** or **decoding** (Claude-Code style), loaded from `config/opencode.json`.
+- **[`opencode-tps-meter@latest`](https://github.com/ChiR24/opencode-tps-meter)** — live tokens-per-second meter for the CLI, loaded from `config/opencode.json`. Custom keybinds (`ctrl+d`/`<leader>q` exit, `ctrl+c`/`escape` interrupt) live in `config/cli.json`.
 
 ## How I use it
 

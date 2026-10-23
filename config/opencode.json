@@ -1,5 +1,22 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "plugins": [
+    "@hadronomy/opencode-handoff-plugin",
+    "billion-context",
+    "@slkiser/opencode-quota",
+    "opencode-tps-meter",
+    "opencode-status-indicator",
+    "oh-my-opencode-slim"
+  ],
+  "websearch": {
+    "provider": "exa"
+  },
+  "compaction": {
+    "auto": false
+  },
+  "lsp": true,
+  "formatter": true,
+  "shell": "/bin/bash",
   "permissions": [
     {
       "action": "read",
@@ -15,6 +32,16 @@
       "action": "edit",
       "resource": "*",
       "effect": "ask"
+    },
+    {
+      "action": "external_directory",
+      "resource": "*",
+      "effect": "ask"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/tmp/*",
+      "effect": "allow"
     },
     {
       "action": "shell",
@@ -63,8 +90,83 @@
     },
     {
       "action": "shell",
-      "resource": "git -C *",
-      "effect": "deny"
+      "resource": "git -C* commit*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* push*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* reset*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* clean*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* checkout *--*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* checkout *.",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* branch *-D*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* rebase*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* filter-branch*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* restore*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* rm *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* stash *drop*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* stash *clear*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* tag *-d*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* --git-dir*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git -C* --work-tree*",
+      "effect": "ask"
     },
     {
       "action": "shell",
@@ -95,23 +197,83 @@
       "action": "shell",
       "resource": "find * -exec*",
       "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git restore *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git rm *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git stash drop *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git stash clear *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git tag -d *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git checkout .",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git --git-dir*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "git --work-tree*",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "sudo *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "dd *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "chmod *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "chown *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "truncate *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "pkill *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "killall *",
+      "effect": "ask"
     }
   ],
-  "plugins": [
-    "@hadronomy/opencode-handoff-plugin",
-    "billion-context",
-    "@slkiser/opencode-quota",
-    "oh-my-opencode-slim"
-  ],
-  "websearch": {
-    "provider": "exa"
-  },
-  "compaction": {
-    "auto": false
-  },
-  "lsp": true,
-  "formatter": true,
-  "shell": "/bin/bash",
   "agents": {
     "explore": {
       "disabled": true
