@@ -55,7 +55,7 @@ This copies `config/` into `~/.config/opencode/` and commands into `~/.config/op
 The config loads six plugins (installed automatically by opencode on first launch):
 
 - **[`billion-context`](https://github.com/ranxianglei/billion-context/)** — Active Context Pruning. Replaces the old ACP plugin with a modern context-compression architecture. Requires `compaction.auto: false`.
-- **[`@hadronomy/opencode-handoff-plugin`](https://github.com/hadronomy/opencode-handoff-plugin)** — session handoff. Lets a session be handed off to a fresh one with a generated summary prompt, so work can continue without dragging the full history along.
+- **[`opencode-handoff`](https://github.com/joshuadavidthomas/opencode-handoff)** — session handoff. `/handoff <goal>` analyzes the conversation, generates a focused continuation prompt with `@file` references, and starts a new session. Includes `read_session` tool access for fetching previous session transcripts.
 - **[`oh-my-opencode-slim`](https://github.com/alvinunreal/oh-my-opencode-slim)** — multi-agent workflow chain. Provides the specialist agents (orchestrator, oracle, explorer, librarian, designer, fixer, …) with per-agent model rosters and fallbacks defined in `config/oh-my-opencode-slim.json`.
 - **[`@slkiser/opencode-quota`](https://github.com/slkiser/opencode-quota)** — quota tracking and toast notifications. Settings in `config/opencode-quota/quota-toast.json`.
 - **[`opencode-status-indicator`](https://github.com/harshithmohan/opencode-status-indicator)** — TUI status indicator showing whether the active request is **prefilling** or **decoding** (Claude-Code style), loaded from `config/opencode.json`.
