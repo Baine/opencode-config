@@ -19,8 +19,8 @@
       },
       "oracle": {
         "model": [
-          { "id": "opencode-go/claude-haiku-5-5", "variant": "xhigh" },
-          { "id": "opencode-go/muse-spark-1.3-contributor", "variant": "xhigh" }
+          { "id": "opencode-go/muse-spark-1.3-contributor", "variant": "xhigh" },
+          { "id": "opencode-go/claude-haiku-5-5", "variant": "xhigh" }
         ],
         "skills": [
           "simplify"
@@ -37,7 +37,7 @@
       },
       "librarian": {
         "model": [
-          { "id": "opencode-go/muse-spark-1.3-contributor", "variant": "high" },
+          { "id": "opencode-go/muse-spark-1.3-contributor", "variant": "xhigh" },
           { "id": "opencode-go/deepseek-v4.1-flash", "variant": "high" }
         ],
         "skills": [],
@@ -81,13 +81,15 @@
     "presets": {
       "default": {
         "alpha": {
-          "model": "opencode-go/deepseek-v4-pro"
+          "model": "opencode-go/claude-haiku-5-5",
+          "variant": "xhigh"
         },
         "beta": {
           "model": "opencode-go/mimo-v2.6-pro"
         },
         "gamma": {
-          "model": "opencode-go/muse-spark-1.3-contributor"
+          "model": "opencode-go/muse-spark-1.3-contributor",
+          "variant": "xhigh"
         }
       }
     }
