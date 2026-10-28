@@ -20,7 +20,7 @@ This repo is the source of truth for my opencode configuration.
 config/
   opencode.json                 Core config (plugins, permissions, agent disables)
   oh-my-opencode-slim.json      Agent/model roster for the oh-my-opencode-slim plugin
-  cli.json                      CLI config — loads the tps-meter plugin and keybinds
+  cli.json                      CLI config — keybinds and UI settings
   opencode-quota/
     quota-toast.json            Quota plugin settings
 commands/
@@ -69,18 +69,20 @@ This copies `config/` into `~/.config/opencode/` and commands into `~/.config/op
 
 ## Plugins
 
-The config loads four plugins (installed automatically by opencode on first launch):
+The config loads six plugins (installed automatically by opencode on first launch):
 
 - **[`billion-context`](https://github.com/ranxianglei/billion-context/)** — Active Context Pruning. Replaces the old ACP plugin with a modern context-compression architecture. Requires `compaction.auto: false`.
-- **[`@hadronomy/opencode-handoff-plugin`](https://github.com/hadronomy/opencode-handoff-plugin)** — session handoff. Lets a session be handed off to a fresh one with a generated summary prompt, so work can continue without dragging the full history along.
+- **[`opencode-handoff`](https://github.com/joshuadavidthomas/opencode-handoff)** — session handoff. `/handoff <goal>` analyzes the conversation, generates a focused continuation prompt with `@file` references, and starts a new session. Includes `read_session` tool access for fetching previous session transcripts.
 - **[`oh-my-opencode-slim`](https://github.com/alvinunreal/oh-my-opencode-slim)** — multi-agent workflow chain. Provides the specialist agents (orchestrator, oracle, explorer, librarian, designer, fixer, …) with per-agent model rosters and fallbacks defined in `config/oh-my-opencode-slim.json`.
 - **[`@slkiser/opencode-quota`](https://github.com/slkiser/opencode-quota)** — quota tracking and toast notifications. Settings in `config/opencode-quota/quota-toast.json`.
-- **[`opencode-tps-meter@latest`](https://github.com/ChiR24/opencode-tps-meter)** — live tokens-per-second meter for the CLI. Loaded from `config/cli.json` along with custom keybinds (`ctrl+d`/`<leader>q` exit, `ctrl+c`/`escape` interrupt).
+- **[`opencode-status-indicator`](https://github.com/harshithmohan/opencode-status-indicator)** — TUI status indicator showing whether the active request is **prefilling** or **decoding** (Claude-Code style), loaded from `config/opencode.json`.
+- **[`opencode-tps-meter@latest`](https://github.com/ChiR24/opencode-tps-meter)** — live tokens-per-second meter for the CLI, loaded from `config/opencode.json`. Custom keybinds (`ctrl+d`/`<leader>q` exit, `ctrl+c`/`escape` interrupt) live in `config/cli.json`.
 
 ## How I use it
 
 - **oh-my-opencode-slim** provides the agent chain with per-agent model rosters tuned in `oh-my-opencode-slim.json`.
 - **/model-refresh** is my periodic routine for checking available free models, benchmark-ranking them, and updating the roster — quality-first on critical lanes.
+- **Status indicator** shows prefill vs decoding state in the TUI footer, a quick signal of request progress (Claude-Code style).
 - **TPS meter** shows live tokens/sec in the CLI, a quick signal of route health and model responsiveness.
 - **billion-context** handles context pruning; OpenCode built-in auto-compaction is disabled (`compaction.auto: false`) to avoid conflicts.
 - **Quota tracking** monitors provider usage via toast notifications (configured in `opencode-quota/quota-toast.json`).

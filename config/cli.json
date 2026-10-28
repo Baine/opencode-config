@@ -4,9 +4,6 @@
     "app.exit": "ctrl+d,<leader>q",
     "session.interrupt": "ctrl+c,escape"
   },
-  "plugins": [
-    "opencode-tps-meter@latest"
-  ],
   "diffs": {
     "wrap": "word"
   },
@@ -15,7 +12,8 @@
     "scrollbar": true,
     "thinking": "show",
     "markdown": "rendered",
-    "verbosity": "high"
+    "verbosity": "high",
+    "permissions": "prompt"
   },
   "animations": true,
   "tabs": {

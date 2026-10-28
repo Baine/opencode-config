@@ -29,10 +29,10 @@ date on every write):
 > Updated: YYYY-MM-DD. Maintained by /model-refresh. Manual edits allowed.
 
 ## Availability Snapshot (as-of YYYY-MM-DD)
-- <provider/model>: variants={...}; multimodal=image|none; usage_multiplier=2x; notes
+- <provider/model>: variants={...}; multimodal=image|none; discount=<n>%_off(≈<m>×_burn, ends YYYY-MM-DD); notes
 
-## Quota Snapshot (as-of YYYY-MM-DD; source: opencode.ai/docs/go/)
-- <req/5h, multiplier, peak/off-peak, price facts — re-fetched every refresh>
+## Quota Snapshot (as-of YYYY-MM-DD; source: https://opencode.ai/v2/docs/console/go/)
+- <req/5h, discount (with expiry), peak/off-peak, price facts — re-fetched every refresh>
 
 ## Stable Quota Facts (90-day TTL)
 - <privacy/training terms, endpoints, structural doc claims>
@@ -51,23 +51,25 @@ date on every write):
 
 **Freshness rules:**
 
-1. **Availability is never trusted from cache.** `opencode models` output is
-   re-run every refresh (cheap, local). The cached Availability Snapshot
-   exists only as the previous state to diff against.
+1. **Availability is never trusted from cache.** `opencode models` (model IDs)
+   and `opencode api GET /api/model` (capabilities + variants) are re-run every
+   refresh (cheap, local). The cached Availability Snapshot exists only as the
+   previous state to diff against.
 2. **Per-model research** (benchmarks, community, go-route) is reused when its
    `as-of` date is ≤30 days old AND the model is unchanged in the availability
-   diff. Re-research when: the model is new, its verbose output changed
-   (variants, multiplier, multimodal), its entry is stale (>30 days), or it is
+   diff. Re-research when: the model is new, its capability/variant output changed
+   (variants, discount, multimodal), its entry is stale (>30 days), or it is
    being newly proposed for a lane it wasn't researched for.
 3. **Go-route reliability** must also be re-verified for any model currently
    flagged in the watch-list, even if fresh.
 4. **Quota economics is never trusted from cache either.** The Go quota page's
-   numeric tables (req/5h, multipliers, pricing) are volatile and carry expiry
-   dates (e.g. promotional multipliers), with no page timestamp — and burn-rate
+   numeric tables (req/5h, discounts, pricing) are volatile and carry expiry
+   dates (e.g. promotional discounts), with no page timestamp — and burn-rate
    figures gate lane selection (policy #4), so stale numbers silently corrupt
-   it. The `/docs/go` page is re-fetched **every refresh** (one webfetch, near
-   free). The cached Quota Snapshot exists only as the previous state to diff
-   against, so the review sees what moved (multiplier dropped/expired, new
+   it. The `/v2/docs/console/go/` page is re-fetched **every refresh** (one
+   webfetch, near free). The cached Quota Snapshot exists only as the previous
+   state to diff against, so the review sees what moved (discount expired or
+   dropped, new
    SKU, limit change). Only genuinely stable narrative facts (privacy and
    model-training terms, endpoint docs) follow the 90-day re-verification rule;
    since the fetch already happened, treat 90 days as the forced re-read for
@@ -105,7 +107,7 @@ date on every write):
    of ~800 requests per 5 hours on the Go pool (GLM-5.3-Flash at 6,320 req/5h is
    the reference minimum; anything materially below that is too much burn even
    for a single fallback slot). **Burn-rate authority is the Estimated Requests
-   table at https://opencode.ai/docs/go#estimated-requests — always reason from
+   table at https://opencode.ai/v2/docs/console/go/#estimated-requests — always reason from
    req/5h figures there, never from dollar prices or monthly caps.**
 5. **Family diversity**: avoid the same model family as both primary and fallback
    within a lane, and diversify families across orchestrator vs oracle so a systemic
@@ -114,9 +116,10 @@ date on every write):
    rules apply.
 6. **Privacy**: Muse Spark Contributor SKUs may train on prompts — acceptable on ANY lane
    per user decision (Sep 24 2026); no lane restrictions apply.
-7. **Effort ceilings**: daily lanes are capped at `high`. `max`/`xhigh` variants
-   only for complex-task lanes: oracle (when a deep call warrants it) and council.
-   (The custom escalation agent was removed Sep 12 2026 — do not re-add it implicitly.)
+7. **Effort ceilings**: `max` is reserved for complex-task lanes: oracle (when a deep
+   call warrants it) and council. All other (daily) lanes may use up to `xhigh`;
+   `high` remains the default. (The custom escalation agent was removed Sep 12 2026 —
+   do not re-add it implicitly.)
 8. **Chains are 2-deep by default** — primary + one fallback.
 9. **No model names in prompt text**: agent `prompt`/`orchestratorPrompt` blocks
    must not name models.
@@ -137,40 +140,63 @@ date on every write):
 Load `MODEL_EVIDENCE_CACHE.md` first (create it if missing). Then:
 
 ```bash
-opencode models opencode-go --verbose
-opencode models --verbose
+# opencode v2.0.24 removed `opencode models --verbose` (and the positional
+# `<provider>` argument); `opencode models` now prints model IDs only.
+# Variants + input modalities come from the authenticated server API instead:
+opencode models
+opencode api GET /api/model
 ```
 
-- Every model referenced in the config must appear in this output; remove dead ones.
-- From each verbose block, record the `variants` map. Models with `{}` have no
-  variants and silently ignore variant settings.
-- Record multimodal capabilities (image/video input) per model — several lanes
+The API response is
+`{ location, data: [ { modelID, providerID, name, capabilities: { tools, input: [...], output: [...] }, variants: [ { id, settings } ] } ] }`.
+Filter it to one line per model with jq (already installed):
+
+```bash
+opencode api GET /api/model \
+  | jq -r '.data[] | select(.providerID=="opencode-go" or .providerID=="opencode")
+           | "\(.providerID)/\(.modelID): variants={\([.variants[].id]|join(","))} in=[\(.capabilities.input|join("+"))]"'
+```
+
+- Every model referenced in the config must appear in `opencode models` (and in
+  the API response); remove dead ones.
+- From the `variants` array, record each model's variant map. An empty array
+  means no variants exist and any variant setting is silently ignored.
+- Record multimodal capabilities (`capabilities.input`) per model — several lanes
   depend on them (librarian reads image-bearing docs; observer is the vision
   reader; deepseek-v4-flash is text-only).
-- **Diff this output against the cached Availability Snapshot** and classify
-  every model: `unchanged`, `changed` (variants/multimodal/multiplier/name
+- **Diff this against the cached Availability Snapshot** and classify every
+  model: `unchanged`, `changed` (variants/multimodal/discount/name
   differences), `new`, or `removed`. This classification drives what Step 3
   re-researches.
+- **Discounts and req/5h burn rates are NOT in the API** — they live only
+  on the `/v2/docs/console/go/` page and are re-fetched in Step 2.
 
 ## Step 2 — Check quota economics
 
-Usage limits: <https://opencode.ai/docs/go/#usage-limits> (flat sub; dollar-quota
+Usage limits: <https://opencode.ai/v2/docs/console/go/#usage-limits> (flat sub; dollar-quota
 per 5h/week/month). "Expensive" means quota **burn rate**, not just token price.
 Verify candidates keep a full working session well under the 5h cap.
 
-**Re-fetch the `/docs/go` page every refresh (rule 4 above): never reuse cached
-burn-rate figures.** Diff the fresh numbers against the cached Quota Snapshot
-so the review sees what moved (multiplier expired or dropped, new SKU, changed
+**Re-fetch the `/v2/docs/console/go/` page every refresh (rule 4 above): never
+reuse cached burn-rate figures.** Diff the fresh numbers against the cached Quota Snapshot
+so the review sees what moved (discount expired or dropped, new SKU, changed
 limits), and note any diffs explicitly. Update the Quota Snapshot and Stable
 Quota Facts sections after this step.
 
 **The Go quota is a combined pool shared across ALL models** — per-model
 req/5h figures (Estimated Requests table) are burn rates against the shared cap,
 not separate budgets. Reason from req/5h figures per policy #4, scaled by the
-lane's realistic call volume. Models may carry a per-model **usage multiplier**
-(shown at opencode.ai/go, e.g. DeepSeek V4.1 Flash "4x · Ends Sep 27") that
-multiplies their req/5h allowance — factor it into burn-rate math, and re-verify
-it per model each refresh since it can change.
+lane's realistic call volume.
+
+**Burn modifiers are published as a price _discount_, not a usage multiplier.**
+The old multiplier column is gone; the page now marks selected models with a
+percent off list price plus an expiry date (e.g. Gemini 4 Argon "50% off", ends
+2026-11-30). Convert to the old multiplier units so burn math stays comparable:
+`equivalent multiple = 1 / (1 − discount)` — 50% off ≡ 2×, 75% ≡ 4×, 80% ≡ 5×.
+Record both the percent and its expiry in the Quota Snapshot, and treat the
+multiple as headroom that **lapses back to 1× on the expiry date**: a discount
+ending silently changes what a lane can afford, so re-verify it per model each
+refresh.
 
 ## Step 3 — Research: benchmarks + community + route reliability
 
@@ -202,8 +228,8 @@ passes complete, with today's date as `as-of` and source links.**
 - Chain entries may be `"provider/model"` or `{ "id": "provider/model", "variant": "..." }`.
 - An agent-level `variant` applies to the whole chain; prefer explicit per-model
   objects when models in one chain need different efforts.
-- Effort ceilings per policy #7: `high` default everywhere; `max`/`xhigh` only on
-  oracle/council.
+- Effort ceilings per policy #7: `high` default everywhere; `max` reserved for
+  oracle/council, `xhigh` allowed on any lane.
 - Set variants only where the model's variant map has an entry.
 
 ## Step 5 — Per-lane review, confirm, apply
@@ -232,8 +258,12 @@ Work ONE decision lane at a time; the user confirms each before any edit:
    `node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" <config-path>`
 6. After the last lane: summary of keep-decisions (one line each) and changed
    lanes, final read-through of the config, full
-   end-state, and a watch-list of monitoring flags (latency unknowns, preview
-   expiries, shared premium quota).
+   end-state, and a watch-list of **re-checkable items only** — conditions the next
+   refresh must re-verify because they can change on their own: route flags
+   (open/clearing), serving/latency unknowns, preview expiries, new-SKU benchmark
+   gaps, and volatile quota facts (discounts, ZDR windows, req/5h rows). Do **not**
+   put intrinsic model traits (e.g. a model's overthinking or supervised-worker
+   profile — these never change) or lane-slot concentration counts here.
 6. Tell the user: changes apply on the next OpenCode run; restart to apply now.
 
 ## Step 6 — Update MODEL_CHOICES.md, MODEL_CHANGELOG.md, and the cache
@@ -268,10 +298,12 @@ After the last lane is confirmed and applied, update the two docs (both live in
 
 ## Source of Truth
 
-The current `oh-my-opencode-slim.json` is the state to review, and
-`opencode models <provider> --verbose` output is the only authority on which
-models exist and which variants they support right now — both are always
-re-derived at the start of every refresh and never taken from cache.
+The current `oh-my-opencode-slim.json` is the state to review, and `opencode
+models` (model IDs) together with `opencode api GET /api/model` (capabilities +
+variants) are the only authority on which models exist and which variants they
+support right now — both are always re-derived at the start of every refresh and
+never taken from cache. (The CLI's `--verbose` flag, which used to print this,
+was removed in opencode v2.0.24.)
 
 Research **findings** (benchmarks, community reports, Go-route reliability,
 quota doc facts) are the exception: they may be reused from
